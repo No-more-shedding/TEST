@@ -469,12 +469,17 @@ function showResult(fromShare){
 
 // ===== 分享 / URL 路由 =====
 const SITE_URL='https://kbti.online/';
+let __cachedShareImg=null;
 
 function restart(){
   // 清掉URL参数后回到首页
   if(location.search||location.hash){
     history.replaceState(null,'',location.pathname);
   }
+  // 清掉分享图缓存和大图引用，让浏览器释放内存（避免卡顿+确保下次重新生成）
+  __cachedShareImg=null;
+  const mi=document.getElementById('modalImg');
+  if(mi)mi.src='';
   ans.fill(-1);cur=0;
   show('introScreen');
 }
@@ -500,7 +505,6 @@ function checkSharedResult(){
 }
 
 // ===== 分享图生成 =====
-let __cachedShareImg=null;
 function genShareImage(){
   return new Promise((resolve,reject)=>{
     const r=window.__lastResult;if(!r){reject('no result');return}
